@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ahora serás Souichi</title>
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: radial-gradient(circle, #8b0000, #2a0000, #000);
+    animation: latido 3s infinite alternate;
+    overflow:hidden;
+}
+
+@keyframes latido{
+    0%{filter:brightness(1);}
+    100%{filter:brightness(0.5) contrast(1.6);}
+}
+
+.titulo{
+    position:absolute;
+    top:10px;
+    text-align:center;
+    width:100%;
+    font-size:5vw;
+    font-family:monospace;
+    color:#ff0000;
+    letter-spacing:2px;
+    text-shadow:0 0 10px black, 0 0 20px red;
+    animation: parpadeo 1.5s infinite;
+}
+
+@keyframes parpadeo{
+    0%,100%{opacity:1;}
+    50%{opacity:0.6;}
+}
+
+.marco{
+    position:relative;
+    display:inline-block;
+}
+
+.marco img{
+    width:85vw;
+    max-width:350px;
+    border:6px solid #111;
+    box-shadow:0 0 40px red;
+    display:block;
+    cursor:crosshair;
+    filter:contrast(1.2) brightness(0.85);
+}
+
+/* Clavo */
+.clavo{
+    position:absolute;
+    width:30px;
+    height:30px;
+    background: radial-gradient(circle at 30% 30%, #ccc, #333);
+    border-radius:50%;
+    box-shadow:0 0 15px black;
+    transform:translate(-50%,-50%);
+    pointer-events:none;
+}
+
+.clavo::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:10px;
+    height:10px;
+    background:#111;
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+}
+
+.final{
+    position:absolute;
+    bottom:30px;
+    color:#ff0000;
+    font-size:6vw;
+    font-family:monospace;
+    text-shadow:0 0 15px red;
+    display:none;
+    animation: parpadeo 1s infinite;
+}
+
+.temblar{
+    animation: shake 0.3s;
+}
+
+@keyframes shake{
+    0%{transform:translate(2px,2px);}
+    25%{transform:translate(-2px,-2px);}
+    50%{transform:translate(2px,-2px);}
+    75%{transform:translate(-2px,2px);}
+    100%{transform:translate(0);}
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🎵 Música fondo -->
+<audio id="musica" autoplay loop>
+    <source src="Audios\Tomie remix.mp3" type="audio/mpeg">
+</audio>
+
+<!-- 🔨 Sonido martillo -->
+<audio id="martillo">
+    <source src="Audios\Martillaso.mp3" type="audio/mpeg">
+</audio>
+
+<!-- 😱 Grito final -->
+<audio id="grito">
+    <source src="Audios\Gritos final.mp3" type="audio/mpeg">
+</audio>
+
+<div class="titulo">
+🔨AHORA SERÁS SOUICHI🔨<br>
+🩸CALVA CLAVOS PARA MATAR A TU ENEMIGO🩸 <br>
+👹TE AYUDARE A MATAR A TODOS MI AMOR👹
+</div>
+
+<div class="marco" id="marco">
+    <img src="Imagen de souichi\OIP_batcheditor_fotor.jpg" id="foto">
+</div>
+
+<div class="final" id="final">
+😈YA LO MATASTE😈
+</div>
+
+<script>
+const marco = document.getElementById("marco");
+const musica = document.getElementById("musica");
+const martillo = document.getElementById("martillo");
+const grito = document.getElementById("grito");
+const finalMensaje = document.getElementById("final");
+
+let contador = 0;
+const maxClavos = 4;
+
+/* Forzar música en móviles */
+document.body.addEventListener("click", function(){
+    musica.play();
+}, { once:true });
+
+marco.addEventListener("click", function(e){
+
+    if(contador >= maxClavos) return;
+
+    const rect = marco.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const clavo = document.createElement("div");
+    clavo.className = "clavo";
+    clavo.style.left = x + "px";
+    clavo.style.top = y + "px";
+
+    marco.appendChild(clavo);
+
+    // 🔨 Sonido martillo
+    martillo.currentTime = 0;
+    martillo.play();
+
+    // Temblor
+    document.body.classList.add("temblar");
+    setTimeout(() => {
+        document.body.classList.remove("temblar");
+    }, 300);
+
+    contador++;
+
+    // Último clavo
+    if(contador === maxClavos){
+        musica.pause();
+        grito.play();
+        finalMensaje.style.display = "block";
+
+        setTimeout(()=>{
+            musica.volume = 1.0;
+            musica.play();
+        },2000);
+    }
+});
+</script>
+
+</body>
+</html>
